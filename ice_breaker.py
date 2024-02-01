@@ -6,15 +6,18 @@ from dotenv import load_dotenv
 
 import json
 
+from agents.linkedin_lookup_agent import lookup as linkedin_lookup_agent
 from third_party.linkedin import scrape_linkedin_profile
 information = """
 Elon Reeve Musk (ilɒnEE-lon; born June 28, 1971) is a businessman and investor. He is the wealthiest person in the world, with an estimated net worth of US$222 billion as of December 2023, according to the Bloomberg Billionaires Index, and $244 billion according to Forbes, primarily from his ownership stakes in Tesla and SpaceX
 """
 
-if __name__=="__main__":
+if __name__ == "__main__":
     print("hello langchain")
     # os.getenv('OPENAI_API_KEY')
     load_dotenv()
+
+    linked_profile_url = linkedin_lookup_agent(name="Eden Macro")
 
     summary_template = """
         given the information {information} about a person from I want to you to create:
@@ -33,11 +36,11 @@ if __name__=="__main__":
         llm=llm,
         prompt=summary_prompt_template
     )
-    linkedin_data = scrape_linkedin_profile(linkedin_profile_url="https://www.linkedin.com/in/harrison-chase-961287118/")
-    # print(linkedin_data)
-    with open("harrison.json", "w") as f:
-        json.dump(linkedin_data, f, indent=4)
+
+    linkedin_data = scrape_linkedin_profile(
+        linkedin_profile_url=linked_profile_url)
+    # # print(linkedin_data)
+    # with open("harrison.json", "w") as f:
+    #     json.dump(linkedin_data, f, indent=4)
 
     print(chain.run(information=linkedin_data))
-
-
